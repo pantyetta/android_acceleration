@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     var SensorY: MutableList<Float> = mutableListOf()
     var SensorZ: MutableList<Float> = mutableListOf()
 
-    var SensorTimer: MutableList<Long> = mutableListOf()
+    var SensorTimer: MutableList<Float> = mutableListOf()
 
 
     fun distance(){
@@ -88,28 +88,28 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         if (event?.sensor?.type === Sensor.TYPE_LINEAR_ACCELERATION) {
 
             val now = System.nanoTime()
-            if(now > clockStart + (1000 * 1000 * 1000).toLong() * 1){
+            if(now > clockStart + (1000 * 1000 * 1000).toLong() * 5){
                 sensorManager.unregisterListener(this)
                 distance()
 
-                clockStart = System.nanoTime()
                 clockLatest = null
 
                 SensorX= mutableListOf()
                 SensorY = mutableListOf()
                 SensorZ= mutableListOf()
                 SensorTimer = mutableListOf()
-
+//
                 sensorManager.registerListener(this, AccSensor, SensorManager.SENSOR_DELAY_UI)
+                clockStart = System.nanoTime()
                 return
             }
             SensorX.add(event.values[0])
             SensorY.add(event.values[1])
             SensorZ.add(event.values[2])
-            SensorTimer.add(now - (clockLatest?: clockStart))
+            SensorTimer.add((now - (clockLatest?: clockStart)) / (1000 * 1000 * 1000).toFloat())
             clockLatest = now
 
-            println("${SensorTimer.lastOrNull()} ${SensorX.lastOrNull()} ${SensorY.lastOrNull()} ${SensorZ.lastOrNull()}")
+//            println("${SensorTimer.lastOrNull()} ${SensorX.lastOrNull()} ${SensorY.lastOrNull()} ${SensorZ.lastOrNull()}")
 
             // TODO
         }
